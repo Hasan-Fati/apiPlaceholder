@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        h3,h4 {
+            margin: 0;
+        }
+        #user {
+            background-color:white;
+            border-radius: 100px;
+            padding: 10px;
+            padding-left: 20px;
+            font-size: 20px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+        body{
+            background: linear-gradient(90deg, rgb(102, 102, 167), rgb(197, 79, 79));
+            font-family: system-ui;
+        }
+
+        #post {
+            background-color: white;
+            border-radius: 10px;
+            font-size: 20px;
+            padding: 10px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            margin-top: 15px;
+        }
+        #user.selected {
+            border: 6px solid #1fbe22; /* Add a border to the selected post */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Main content -->
+    <div id="content" style="display: flex;">
+                      
+        <!-- User container -->
+        <div id="users" style="width: 30%;">
+            <div style="height: 100px;margin: 0 auto;">
+
+                <!-- User -->
+                <div id="user" class="selected">
+                    <h3>hasan</h3>
+                    <h3>hasan@gmail.com</h3>
+                </div>
+                <!-- User -->
+
+            </div>
+        </div>
+        <!-- End User container -->
+
+        <!-- POSTS CONTAINER -->
+        <div id="post-container" style="width: 70%; background-color: rgb(236, 236, 236); overflow-y: auto;
+        max-height: 120vh; ">
+            <!-- POSTS -->
+            <div id="posts" style="width: 90%; margin: 0 auto; padding-bottom: 20px;">
+                <!-- POST --> 
+                <div id="post">
+                    <h3>Hello world</h3>
+                    <hr>
+                <h4>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis nulla cumque blanditiis vero aliquid enim ullam ad! Accusamus, beatae? Perspiciatis nisi, facilis similique repellendus suscipit mollitia modi maxime quasi tempore.
+                </h4>
+                </div>
+                <!-- END POST-->
+            </div>
+            <!-- END POSTS -->
+        </div>
+        <!-- END POSTS CONTAINER -->
+    </div>
+</body>
+<script>
+    //------------------------------------------------
+    //------------ get User function -----------------
+    //------------------------------------------------
+    function getUser() {
+        let request = new XMLHttpRequest();
+        request.open('GET', 'https://jsonplaceholder.typicode.com/users');
+        // request.responseType = "json";
+        request.send();
+        request.onload = function () {
+            if (request.status >= 200 && request.status < 300) {
+                let users = JSON.parse(request.response);
+                document.getElementById('users').innerHTML = "";
+                for (user of users) {
+                let content = `
+                <div id="user" class="" onclick="clickedUser(${user.id},this)">
+                    <h3>${user.name}</h3>
+                    <h3>${user.email}</h3>
+                </div>
+                `
+                document.getElementById('users').innerHTML += content;
+                }
+            }else {
+                alert("error 503");
+            }
+        }
+    }
+    getUser();
+
+    //------------------------------------------------
+    //------------ get post with user id -------------
+    //------------------------------------------------
+
+    function clickedUser(id, el) {
+        getPosts(id);
+        let selectedElements = document.getElementsByClassName("selected");
+        for (element of selectedElements) {
+            element.classList.remove("selected");
+        }
+        el.classList.add("selected");
+        console.log(el);
+    }
+
+
+    //------------------------------------------------
+    //------------ get post function -----------------
+    //------------------------------------------------
+
+    function getPosts(userId) {
+        let request = new XMLHttpRequest();
+        request.open('GET', 'https://jsonplaceholder.typicode.com/posts?userId='+userId);
+        request.responseType = "json";
+        request.send();
+        request.onload = function () {
+            if (request.status >= 200 && request.status < 300) {
+                let posts = request.response;
+                document.getElementById('posts').innerHTML = "";
+                for (post of posts) {
+                let content = `
+                <div id="post">
+                    <h3>${post.title}</h3>
+                    <hr>
+                <h4>${post.body}</h4>
+                </div>
+                `
+                document.getElementById('posts').innerHTML += content;
+                }
+            }else {
+                alert("error 503");
+            }
+        }
+    }
+    getPosts();
+</script>
+</html>
+ 
